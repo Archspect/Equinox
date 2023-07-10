@@ -1,0 +1,25 @@
+[submodule "Vendor/bimg"]
+	path = Vendor/bimg
+	url = https://github.com/bkaradzic/bimg
+[submodule "Vendor/bx"]
+	path = Vendor/bx
+	url = https://github.com/bkaradzic/bx
+[submodule "Vendor/bgfx"]
+	path = Vendor/bgfx
+	url = https://github.com/bkaradzic/bgfx
+[submodule "Vendor/SDL"]
+	path = Vendor/SDL
+	url = https://github.com/libsdl-org/SDL
+	branch = SDL2
+[submodule "Vendor/FastNoiseLite"]
+	path = Vendor/FastNoiseLite
+	url = https://github.com/Auburn/FastNoiseLite
+[submodule "Vendor/fmt"]
+	path = Vendor/fmt
+	url = https://github.com/fmtlib/fmt
+[submodule "Vendor/glm"]
+	path = Vendor/glm
+	url = https://github.com/g-truc/glm
+[submodule "Vendor/flecs"]
+	path = Vendor/flecs
+	url = https://github.com/SanderMertens/flecs

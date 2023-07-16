@@ -23,3 +23,9 @@
 [submodule "Vendor/flecs"]
 	path = Vendor/flecs
 	url = https://github.com/SanderMertens/flecs
+[submodule "Vendor/cereal"]
+	path = Vendor/cereal
+	url = https://github.com/USCiLab/cereal
+[submodule "Vendor/cs_string"]
+	path = Vendor/cs_string
+	url = https://github.com/copperspice/cs_string

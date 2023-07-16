@@ -3,6 +3,7 @@
 /* This generated file contains includes for project dependencies */
 #include "flecs.h"
 #include <SDL2/SDL_stdinc.h>
+#include <string>
 
 #ifdef __cplusplus
 extern "C"
@@ -14,7 +15,7 @@ extern "C"
 
     struct Window
     {
-        char *title;
+        std::string title;
         int width;
         int height;
         Uint32 flags;

@@ -16,7 +16,7 @@ WindowModule::WindowModule(flecs::world &ecs)
     SDL_Event currentSDLEvent;
     SDL_SysWMinfo WMI;
 
-    InitWindow = ecs.system<Window>("Initialize Window Module").kind(flecs::OnStart).each([&, this](Window &w) {
+    InitWindow = ecs.system<Window>("Initialize Window Module").kind(flecs::OnStart).each([](Window &w) {
         if (SDL_Init(SDL_INIT_VIDEO) < 0)
         {
             printf("Welp. Looks like SDL gave up :/\n");
@@ -24,8 +24,8 @@ WindowModule::WindowModule(flecs::world &ecs)
         }
         else
         {
-            SDL_Window *sdl_window =
-                SDL_CreateWindow(w.title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w.width, w.height, w.flags);
+            SDL_Window *sdl_window = SDL_CreateWindow(w.title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                                                      w.width, w.height, w.flags);
             if (sdl_window == NULL)
             {
                 printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
@@ -33,86 +33,85 @@ WindowModule::WindowModule(flecs::world &ecs)
         }
     });
 
-    UpdateWindow =
-        ecs.system<Window>("Loop forever to keep the window up").kind(flecs::OnUpdate).each([&, this](Window &w) {
-            while (!w.quit)
+    UpdateWindow = ecs.system<Window>("Loop forever to keep the window up").kind(flecs::OnUpdate).each([&](Window &w) {
+        while (!w.quit)
+        {
+            while (SDL_PollEvent(&currentSDLEvent) != 0)
             {
-                while (SDL_PollEvent(&currentSDLEvent) != 0)
+                switch (currentSDLEvent.type)
                 {
-                    switch (currentSDLEvent.type)
+                case SDL_WINDOWEVENT:
+
+                    switch (currentSDLEvent.window.event)
                     {
-                    case SDL_WINDOWEVENT:
+                    case SDL_WINDOWEVENT_SHOWN:
+                        ecs.event<Events::Window::Shown>().emit();
+                        break;
 
-                        switch (currentSDLEvent.window.event)
-                        {
-                        case SDL_WINDOWEVENT_SHOWN:
-                            ecs.event<Events::Window::Shown>().emit();
-                            break;
+                    case SDL_WINDOWEVENT_HIDDEN:
+                        ecs.event<Events::Window::Hidden>().emit();
+                        break;
 
-                        case SDL_WINDOWEVENT_HIDDEN:
-                            ecs.event<Events::Window::Hidden>().emit();
-                            break;
+                    case SDL_WINDOWEVENT_EXPOSED:
+                        ecs.event<Events::Window::Exposed>().emit();
+                        break;
 
-                        case SDL_WINDOWEVENT_EXPOSED:
-                            ecs.event<Events::Window::Exposed>().emit();
-                            break;
+                    case SDL_WINDOWEVENT_MOVED:
+                        ecs.event<Events::Window::Moved>().emit();
+                        break;
 
-                        case SDL_WINDOWEVENT_MOVED:
-                            ecs.event<Events::Window::Moved>().emit();
-                            break;
+                    case SDL_WINDOWEVENT_RESIZED:
+                        ecs.event<Events::Window::Resized>().emit();
+                        break;
 
-                        case SDL_WINDOWEVENT_RESIZED:
-                            ecs.event<Events::Window::Resized>().emit();
-                            break;
+                    case SDL_WINDOWEVENT_SIZE_CHANGED:
+                        ecs.event<Events::Window::SizeChanged>().emit();
+                        break;
 
-                        case SDL_WINDOWEVENT_SIZE_CHANGED:
-                            ecs.event<Events::Window::SizeChanged>().emit();
-                            break;
+                    case SDL_WINDOWEVENT_MINIMIZED:
+                        ecs.event<Events::Window::Minimized>().emit();
+                        break;
 
-                        case SDL_WINDOWEVENT_MINIMIZED:
-                            ecs.event<Events::Window::Minimized>().emit();
-                            break;
+                    case SDL_WINDOWEVENT_MAXIMIZED:
+                        ecs.event<Events::Window::Maximized>().emit();
+                        break;
 
-                        case SDL_WINDOWEVENT_MAXIMIZED:
-                            ecs.event<Events::Window::Maximized>().emit();
-                            break;
+                    case SDL_WINDOWEVENT_RESTORED:
+                        ecs.event<Events::Window::Restored>().emit();
+                        break;
 
-                        case SDL_WINDOWEVENT_RESTORED:
-                            ecs.event<Events::Window::Restored>().emit();
-                            break;
+                    case SDL_WINDOWEVENT_ENTER:
+                        ecs.event<Events::Window::MouseFocus>().emit();
+                        break;
 
-                        case SDL_WINDOWEVENT_ENTER:
-                            ecs.event<Events::Window::MouseFocus>().emit();
-                            break;
+                    case SDL_WINDOWEVENT_LEAVE:
+                        ecs.event<Events::Window::MouseUnfocus>().emit();
+                        break;
 
-                        case SDL_WINDOWEVENT_LEAVE:
-                            ecs.event<Events::Window::MouseUnfocus>().emit();
-                            break;
+                    case SDL_WINDOWEVENT_FOCUS_GAINED:
+                        ecs.event<Events::Window::KeyboardFocus>().emit();
+                        break;
 
-                        case SDL_WINDOWEVENT_FOCUS_GAINED:
-                            ecs.event<Events::Window::KeyboardFocus>().emit();
-                            break;
+                    case SDL_WINDOWEVENT_FOCUS_LOST:
+                        ecs.event<Events::Window::KeyboardUnfocus>().emit();
+                        break;
 
-                        case SDL_WINDOWEVENT_FOCUS_LOST:
-                            ecs.event<Events::Window::KeyboardUnfocus>().emit();
-                            break;
+                    case SDL_WINDOWEVENT_CLOSE:
+                        ecs.event<Events::Window::Close>().emit();
+                        break;
 
-                        case SDL_WINDOWEVENT_CLOSE:
-                            ecs.event<Events::Window::Close>().emit();
-                            break;
+                    case SDL_WINDOWEVENT_TAKE_FOCUS:
+                        ecs.event<Events::Window::OfferedFocus>().emit();
+                        break;
 
-                        case SDL_WINDOWEVENT_TAKE_FOCUS:
-                            ecs.event<Events::Window::OfferedFocus>().emit();
-                            break;
-
-                        case SDL_WINDOWEVENT_DISPLAY_CHANGED:
-                            ecs.event<Events::Window::DisplayChanged>().emit();
-                            break;
-                        }
+                    case SDL_WINDOWEVENT_DISPLAY_CHANGED:
+                        ecs.event<Events::Window::DisplayChanged>().emit();
+                        break;
                     }
                 }
             }
-        });
+        }
+    });
 
     ecs.observer<Window>().event<Events::Window::Close>().each([&](Window &w) { w.quit = true; });
 }

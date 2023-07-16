@@ -15,6 +15,8 @@ int main(int, char *[])
         false,
     });
 
-    ecs.progress();
+    while (ecs.progress())
+    {
+    }
     return 0;
 }

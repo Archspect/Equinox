@@ -26,7 +26,3 @@
 [submodule "Vendor/cs_string"]
 	path = Vendor/cs_string
 	url = https://github.com/copperspice/cs_string
-[submodule "Vendor/flecs"]
-	path = Vendor/flecs
-	url = https://github.com/SanderMertens/flecs/
-	branch = v3.2.4

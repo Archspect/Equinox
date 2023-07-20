@@ -35,8 +35,7 @@ target_link_libraries(equinox GL X11 ${CMAKE_DL_LIBS} pthread)
 target_link_directories(equinox PRIVATE 
 ./Vendor/bgfx/.build/linux64_gcc/bin/
 ./Vendor/fmt/build/
-./Vendor/SDL/build/
-./Vendor/cs_string/build/lib)
+./Vendor/SDL/build/)
 
 add_subdirectory(Vendor/flecs)
 
@@ -64,4 +63,4 @@ if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 file (COPY ${CMAKE_SOURCE_DIR}/Vendor/bgfx/examples/runtime/ DESTINATION ${CMAKE_BINARY_DIR})
 
 target_link_libraries(${PROJECT_NAME} flecs::flecs_static)
-target_link_libraries(equinox SDL2 fmt CsString )
+target_link_libraries(equinox SDL2 fmt )
